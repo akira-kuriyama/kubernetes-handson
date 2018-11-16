@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hello-world-configmap
+spec:
+  containers:
+    - image: asia.gcr.io/PROJECT_ID/my-project/hello-world
+      imagePullPolicy: Always
+      name: hello-world
+      env:
+        - name: CUSTOM_MESSAGE
+          valueFrom:
+            configMapKeyRef:
+              name: hello-world-config
+              key: hello-world.message

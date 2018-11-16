@@ -1,0 +1,15 @@
+apiVersion: extensions/v1beta1
+kind: ReplicaSet
+metadata:
+  name: hello-world-replicaset
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        name: hello-world
+    spec:
+      containers:
+        - image: asia.gcr.io/PROJECT_ID/my-project/hello-world
+          imagePullPolicy: Always
+          name: hello-world
