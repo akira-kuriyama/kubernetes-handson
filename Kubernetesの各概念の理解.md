@@ -102,8 +102,8 @@
 * Podにはクラスタ内で有効な内部IPアドレス(ClusterIP)が付与される。
 * Pod単体では外部のネットワークからアクセスができない。外部のネットワークからPodへアクセスするためには後述するServiceを使用する必要がある。
 
+![スクリーンショット 2018-11-18 14.35.10.png](https://qiita-image-store.s3.amazonaws.com/0/14124/b25ca724-f1bf-670a-1a50-19a0c9e59f1d.png)
 NodeをまたがってPodはデプロイされない。
-![スクリーンショット 2018-01-11 20.16.46.png](https://qiita-image-store.s3.amazonaws.com/0/14124/c387f924-2e45-1d63-2922-c687db7a39f1.png)
 
 ## ReplicaSet
 
