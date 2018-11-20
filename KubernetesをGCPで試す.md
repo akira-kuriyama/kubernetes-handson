@@ -129,14 +129,14 @@ $ gcloud components install kubectl
 # 2, ハンズオンの準備
 
 ```bash
-
 $ cd 適当な作業ディレクトリ
-$ wget https://s3-ap-northeast-1.amazonaws.com/kubernetes-handson/k8s-hands-on.tar.gz
-$ tar zxvf k8s-hands-on.tar.gz
-$ cd k8s-hands-on
+$ git clone https://github.com/akira-kuriyama/kubernetes-handson.git
+$ cd kubernetes-handson/source
 $ echo $PROJECT_ID # k8s-test以外の文字が出力されることを確認
 $ sed -i '' "s/PROJECT_ID/$PROJECT_ID/g" *.yaml
 ```
+
+以降は `kubernetes-handson/source`以下のyamlファイルを使ってハンズオンを進めます。
 
 # 3, Kubernetes Clusterの作成
 
