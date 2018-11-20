@@ -129,9 +129,6 @@ NodeをまたがってPodはデプロイされない。
     * L7ロードバランサは後述するIngressが担当する
 * Serviceにはエンドポイントを提供する複数の種類がありますので、要件に合わせて選択しましよう。
 
-例：
-![スクリーンショット 2018-01-18 20.28.35.png](https://qiita-image-store.s3.amazonaws.com/0/14124/a11331a5-26eb-faef-deb7-4e4dd45ca4a9.png)
-
 
 
 ### Serviceの種類
@@ -151,11 +148,6 @@ NodeをまたがってPodはデプロイされない。
 * IngressはKubernetesが動作している環境によって機能とその実装が大きく変わり、GCPではGCPの、AWSではAWSの環境に合った形でロードバランサーが作成されます。
     * たとえばGCP上ではGCPのHTTPロードバランサが作成されます。
 * GCP上だとIngressリソースを定義すると自動的にHTTPロードバランサが作成されるが、オンプレだと作成されないため自前でロードバランサを用意する必要がある。。
-
-
-例：
-![スクリーンショット 2018-01-18 20.25.48.png](https://qiita-image-store.s3.amazonaws.com/0/14124/90592c8a-5543-ede3-0eb5-ea01208e7007.png)
-
 
 
 ## DaemonSet
