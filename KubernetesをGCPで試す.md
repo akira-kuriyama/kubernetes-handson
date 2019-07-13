@@ -2,12 +2,22 @@
 # 0, 用語の理解
 
 Kubernetesは概念が命。
-用語を理解しないと始まらない。 (そして用語が沢山あるのだ…)
+用語を理解しないと始まらない。 
 
 [Kubernetesの用語の理解](https://qiita.com/sheepland/private/cdff472ba2d37784a125)
 
 
 # 1, 準備
+
+### 事前準備
+
+- ローカルにpython 2.7がインストールされていことを確認
+- `brew install wget`
+
+### GCPのアカウントを作成
+
+会社のメアドではなく、個人のメアドでアカウントを作成します。
+会社のメアドで作るとstudyplus会社のGCPアカウントの中でユーザ作成がされて、同名のプロジェクトが作れなくなって面倒なことになります。
 
 ### GCPのコンソールにアクセスできることを確認。
 
@@ -24,29 +34,10 @@ https://console.cloud.google.com/home/dashboard
 
 ![スクリーンショット 2018-10-15 22.33.23.png](https://qiita-image-store.s3.amazonaws.com/0/14124/bfb473eb-1ee7-d6eb-475b-3b0315f13301.png)
 
-
-
-###  Google Cloud Platform サービスの有効化  
-
-さらに、GCPではサービスを利用する前に有効化する必要があります。
-検索窓に「api」とうち、「APIとサービス」を選びます
-![スクリーンショット 2018-05-09 1.51.46.png](https://qiita-image-store.s3.amazonaws.com/0/14124/5c6bbf31-f1ba-1412-d8da-a99c8be00b7b.png)
-そして次に「APIとサービスの有効化」ボタンを押します。
-![スクリーンショット 2018-05-09 1.56.35.png](https://qiita-image-store.s3.amazonaws.com/0/14124/1956a8ad-0085-f4c4-8485-d724b672b1a1.png)
-
-表示された検索窓に以下の文字列をうって検索し、それぞれ有効化してください。
-もしかしたら既に有効化済みのものもあるかも。
-また有効化には時間がかかるので、別タブ開いて次のAPIを有効化すると時間の節約になります。
-
-* Compute Engine API
-* Kubernetes Engine API
-* Cloud Build API
-* Container Registry API
-
 ### gcloudツールのインストール
 
 https://cloud.google.com/sdk/docs/quickstart-mac-os-x
-の"始める前に"の1〜4を行う。
+の"始める前に"の1〜4を行います。
 "始める前に"のセクションだけやればいいです。"SDK の初期化"のセクションはやらなくて大丈夫です。
 
 
@@ -55,23 +46,27 @@ https://cloud.google.com/sdk/docs/quickstart-mac-os-x
 
 bashの人
 
-```sh:.bashrc
-# bashの人は以下でよい。ただし"$HOME/path/to"の部分は適切に修正すること。
+.bashrc
+
+```sh
+# bashの人は以下。ただし"$HOME/path/to"の部分は適切に修正すること。
 source $HOME/path/to/google-cloud-sdk/completion.bash.inc
 source $HOME/path/to/google-cloud-sdk/path.bash.inc
 
-#エイリアスはお好みで(kubectlコマンドは後でインストールするが先にaliasだけ設定しておく)
+# エイリアスはお好みで(kubectlコマンドは後でインストールするが先にaliasだけ設定しておく)
 alias kc=kubectl 
 ```
 
 zshの人
 
-```sh:.zshrc
-# zshの人は以下でよい。ただし"$HOME/path/to"の部分は適切に修正すること。
+.zshrc
+
+```sh
+# zshの人は以下。ただし"$HOME/path/to"の部分は適切に修正すること。
 source $HOME/path/to/google-cloud-sdk/completion.zsh.inc
 source $HOME/path/to/google-cloud-sdk/path.zsh.inc
 
-#エイリアスはお好みで(kubectlコマンドは後でインストールするが先にaliasだけ設定しておく)
+# エイリアスはお好みで(kubectlコマンドは後でインストールするが先にaliasだけ設定しておく)
 alias kc=kubectl
 ```
 
@@ -90,7 +85,7 @@ $ gcloud components update
 
 ### プロジェクトIDの設定をする
 
-```
+```bash
 $ PROJECT_ID=hogehoge #ここにプロジェクトIDを設定する(プロジェクトIDの取得の仕方は下の画像を参照)
 ```
 
@@ -98,7 +93,7 @@ $ PROJECT_ID=hogehoge #ここにプロジェクトIDを設定する(プロジェ
 ![スクリーンショット 2018-10-10 23.43.37.png](https://qiita-image-store.s3.amazonaws.com/0/14124/ac943a9f-ded9-8b2e-8ee1-a1620d3aea9f.png)
 
 
-```
+```bash
 $ echo $PROJECT_ID # k8s-test以外の文字が出力されることを確認
 $ gcloud config set project $PROJECT_ID
 $ gcloud config list | grep project # 設定されていることを確認
@@ -106,13 +101,13 @@ $ gcloud config list | grep project # 設定されていることを確認
 
 ### リージョンの設定をする
 
-```
+```bash
 $ gcloud config set compute/zone asia-northeast1-a
 ```
 
 ### 認証をする
 
-```
+```bash
 $ gcloud auth login
 ```
 
@@ -122,8 +117,18 @@ $ gcloud auth login
 
 kubectlはKubernetesを操作するためのCLIツールです
 
-```
+```bash
 $ gcloud components install kubectl
+```
+
+###  Google Cloud Platform サービスの有効化  
+
+GCPでは各サービスを利用する際にAPIを有効化する必要があります。
+GCPの管理画面から各サービスの画面にアクセスすると、自動でAPIが有効になります。
+しかしAPIの有効化に1分弱かかるので、今回使うサービスを事前に有効化しておきます(実行完了まで少々かかります)。
+
+```bash
+$ gcloud services enable container.googleapis.com compute.googleapis.com cloudbuild.googleapis.com containerregistry.googleapis.com
 ```
 
 # 2, ハンズオンの準備
@@ -142,7 +147,7 @@ $ sed -i '' "s/PROJECT_ID/$PROJECT_ID/g" *.yaml
 
 Kubernetes Clusterの作成します。(デフォルトで3台のNodeが作成されます)
 
-```
+```bash
 $ gcloud container clusters create my-k8s
 ```
 
@@ -158,14 +163,13 @@ Kubernetes Clusterが作成されると以下のようになる。
 
 クラスタが作成できたら、kubectlが正しくクラスタに接続して操作を行えるように、kubernetesクラスタの認証情報をセットします。
 
-```
+```bash
 $ gcloud container clusters get-credentials my-k8s
 ``` 
 
-
 確認
 
-```
+```bash
 $ kubectl cluster-info
 ```
 
@@ -186,14 +190,15 @@ To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
 
 # 4, podを配置
 
-これから"◯◯ファイルを作成"というのが出てきますが、すでにファイルはwgetして手に入れているのでスキップして下さい。
+これから"◯◯ファイルを作成"というのが出てきますが、すでにファイルはgit cloneして手に入れているのでスキップして下さい。
 
 ### 最初にimageを作成
 
 main.goを作成。8080ポートでまちうけ、Hello, World!を返すプログラム。
 
 
-```go:hello.go
+hello.go
+```go
 package main
 
 import (
@@ -220,7 +225,9 @@ func hello(w http.ResponseWriter, r *http.Request) {
 
 次にDockerfileを作成
 
-```txt:Dockerfile
+Dockerfile
+
+```txt
 FROM alpine:3.6
 EXPOSE 8080
 ADD hello-world /hello-world 
@@ -229,7 +236,9 @@ CMD ["/hello-world"]
 
 次にcloudbuild.yamlを作成
 
-```yaml:cloudbuild.yaml
+cloudbuild.yaml
+
+```yaml
 steps:
 - name: 'gcr.io/cloud-builders/go:alpine'
   env: ['PROJECT_ROOT=my-project']
@@ -243,17 +252,20 @@ images: ['asia.gcr.io/PROJECT_ID/my-project/hello-world:latest']
 次にGoogle Container Register(以下、GCR) にイメージを登録します。
 
 ```
-$ gcloud container builds submit --config=cloudbuild.yaml .
+$ gcloud builds submit --config=cloudbuild.yaml .
 ```
 
 https://console.cloud.google.com/gcr にアクセスして登録されたことを確認。
-`$ gcloud container builds list`でも確認できる。
+
+`$ gcloud builds list`でも確認できる。
 
 ### Podの作成
 
 次にpodファイルを作成
 
-```yaml:pod.yaml
+pod.yaml
+
+```yaml
 apiVersion: v1
 kind: Pod
 metadata:
@@ -265,7 +277,7 @@ spec:
       name: hello-world
 ```
 
-そしていよいよpodをKubernetes上に作成
+そして以下のコマンドを実行して、podをKubernetes上に作成
 
 ```
 kubectl create -f pod.yaml
@@ -278,6 +290,8 @@ $ kubectl get pods
 NAME          READY     STATUS    RESTARTS   AGE
 hello-world   1/1       Running   0          5s
 ```
+
+※ ちなみに`kubectl get pod`とか `kubectl get po`でもいける。
 
 またGCPのKubernetes画面のワークロードの画面でも確認できる。
 https://console.cloud.google.com/kubernetes/workload
@@ -300,10 +314,10 @@ pod内に複数のコンテナが動いている場合は、以下のように�
 kubectl exec $pod_name --container $container_name $command
 ```
 
-※ ちなみに`kubectl get pod`とか `kubectl get po`でもいける。
-
 また、
-`$ kubectl get pod -o wide`で追加情報が表示される。get pod以外にも
+`$ kubectl get pod -o wide`で追加情報(どのnodeで動いているか等)が表示される。
+
+get pod以外にも
 
 ```
 kubectl get deployments
@@ -314,21 +328,22 @@ kubectl get services
 があり、それぞれ `-o wide`が使える。
 
 あとpod(やserviceやreplicasetやdeployment)の定義を知りたい場合は、
-`kubectl get pod -o yaml`のように`-o yaml`でみれる。便利。
+`kubectl get pod -o yaml`のように`-o yaml`をつけるとみれる。便利。
+
 podの詳細情報を見たい場合は、
 `kubectl describe pod`や`kubectl describe pod pod名`でみれる
+
+コンテナが起動しない場合は、`kubectl describe pod pod名`の`Events`欄をみると原因が分かることが多い。
 
 # 5, podへのアクセス
 
 pod内のコンテナへ簡単にアクセスするための方法として、port forwardingがあります。
 
-$POD_NAMEは `kubectl get pods` したときに一番左側に表示されているやつ。
-
 ```
-$ kubectl port-forward $POD_NAME 8080
+$ kubectl port-forward pod名(kubectl get podの左側のNAME) 8080
 ```
 
-で、別タブで、
+で、別タブで、以下を実行すると`Hello, World!`が返ってきます。
 
 ```
 $ curl http://localhost:8080/
@@ -336,15 +351,25 @@ $ curl http://localhost:8080/
 
 
 確認できたら、いったん削除しましょう
-`kubectl delete pods $POD_NAME`
+
+```
+$ kubectl delete pods pod名(kubectl get podの左側のNAME)
+```
+
 もしくは
-`kubectl delete -f pod.yaml`
+
+```sh
+# こっちのほうがよく使う
+$ kubectl delete -f pod.yaml
+``` 
 
 # 6, 設定値を設定ファイルから与える
 
 まず以下のような設定ファイルを作成
 
-```yaml:configmap.yaml
+configmap.yaml
+
+```yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -355,15 +380,18 @@ data:
 
 以下を実行する。
 
-```
+```sh
 $ kubectl create -f configmap.yaml
 # 以下で作成されていることを確認
 $ kubectl get configmaps
+$ kubectl describe configmaps
 ```
 
-次にpod定義ファイルを作成。envセクションがポイント。configMapKeyRefとか。
+次にpodリソースファイルを作成。envセクションがポイント。configMapKeyRefの部分で設定ファイル名と使用する設定Keyを指定している。
 
-```yaml:pod-configmap.yaml
+pod-configmap.yaml
+
+```yaml
 apiVersion: v1
 kind: Pod
 metadata:
@@ -382,66 +410,42 @@ spec:
 ```
 
 で、
-`$ kubectl create -f pod-configmap.yaml` でpodを作成し、
-`$ kubectl port-forward $POD_NAME 8080` をして、
+```
+$ kubectl create -f pod-configmap.yaml
+```
+
+でpodを作成し、
+
+```
+$ kubectl port-forward pod名(kubectl get podの左側のNAME) 8080
+``` 
+
+をして、
 別タブで、
-`$ curl http://localhost:8080/`
-すると、"Hello World, ConfigMap!"とでるはず。
+
+```
+$ curl http://localhost:8080/
+```
+
+すると、"Hello World, ConfigMap!"とでます
 
 確認できたら、いったん削除しましょう
-`kubectl delete pods $POD_NAME`
+
+```
+kubectl delete pods pod名(kubectl get podの左側のNAME)
+```
+
 もしくは
-`kubectl delete -f pod-configmap.yaml`
-
-# 7, ReplicaSetを使ったデプロイ
-
-```yaml:replicaset.yaml
-apiVersion: extensions/v1beta1
-kind: ReplicaSet
-metadata:
-  name: hello-world-replicaset
-spec:
-  replicas: 3
-  template:
-    metadata:
-      labels:
-        name: hello-world
-    spec:
-      containers:
-        - image: asia.gcr.io/PROJECT_ID/my-project/hello-world
-          imagePullPolicy: Always
-          name: hello-world
-```
-
-以下でreplicasetを生成する
 
 ```
-$ kubectl create -f replicaset.yaml
+kubectl delete -f pod-configmap.yaml
 ```
 
+# 7, Deploymentを使ったデプロイ
 
-`$ kubectl get pods`
-3つ作成されているのが分かる。
-次に試しにpodの一つを手動で消してみる。
-`$ kubectl delete pods $POD_NAME`
-すると、podが3つに戻ることが確認できます。
-`$ kubectl get pods`
+deployment.yaml
 
-つぎに、replicaset.yaml内の`replicas: 3`を`replicas: 1`にして、
-`$ kubectl replace -f replicaset.yaml` とやって設定を変更し、
-`$ kubectl get pods`とすると、pod数が1になっていることが確認できます。
-
-ちなみに
-`$ kubectl get replicasets`でReplicaSetの状態を確認できます。
-
-確認が終わったら消しておきましょう。
-`$ kubectl delete replicaset hello-world-replicaset`
-もしくは
-`$ kubectl delete -f replicaset.yaml`
-
-# 8, Deploymentを使ったデプロイ
-
-```yaml:deployment.yaml
+```yaml
 apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
@@ -460,30 +464,74 @@ spec:
 ```
 
 次にデプロイをする
-`$ kubectl create -f deployment.yaml`
+
+```
+$ kubectl create -f deployment.yaml
+```
 
 **これでdeploymentとreplicasetとpodが作成される。**
 
-`$ kubectl get pod,replicasets,deployments`で確認
+podはコンテナを擁するリソース、
+replicasetはpodの数を維持するためのリソース、
+deploymentはreplicasetを擁し、世代管理(バージョニング)をするためのリソース になります。
 
-もしくは `$ kubectl get all`で確認
+なので、deploymentの中にreplicasetがあり、replicasetの中にpodがあり、podの中にコンテナがあるイメージです。
 
-あとは、GCPのKubernetesのワークロードの画面で、deploymentを確認することができる。
+
+```
+$ kubectl get pod,replicasets,deployments
+```
+
+で確認
+
+もしくは 
+
+```
+$ kubectl get all
+```
+
+で確認
+
+GCPのKubernetesのワークロードの画面で、deploymentを確認することができる。
 https://console.cloud.google.com/kubernetes/workload
 
 
+```
+$ kubectl get pods
+```
+
+を実行するとpodが3つ作成されているのが分かる。
+試しにpodの一つを手動で消してみる。
+
+```
+$ kubectl delete pods pod名(kubectl get podの左側のNAME)
+```
+
+すると、podが3つに戻ることが確認できます。
+
+```
+$ kubectl get pods
+```
+
+つぎに、deployment.yaml内の`replicas: 3`を`replicas: 1`にして、
+`$ kubectl replace -f replicaset.yaml` とやって設定を変更し、
+`$ kubectl get pods`とすると、pod数が1になっていることが確認できます(すぐにpodが復活するで分かりづらいかもしれませんが、AGEの欄をみると若いpodが1ついるのが分かると思います)。
+
 ※ このdeploymentは消さなくてよいです。
 
-# 9, Serviceの作成
+# 8, Serviceの作成
  
 
 LoadBalancerも一緒に作成してくれるServiceを作成します(`type: LoadBalancer`)。
 このtypeはIngressがなくても静的IPが割り当てられます。
 
 yaml内の`selector`に`name: hello-world-pod`と指定されているが、これは`name: hello-world-pod`のlabelを持ったpodと紐付けるという意味。
+
 `port: 80`はこのserviceがうけつけるport。`targetPort: 8080`はpodが開放しているport。
 
-```yaml:lb-service.yaml
+lb-service.yaml
+
+```yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -498,13 +546,18 @@ spec:
 ```
 
 serviceのデプロイ
-`$ kubectl create -f lb-service.yaml`
 
-`$ kubectl get services hello-world-lb-svc -w`
--wを指定すると、変更や再登録があった際に更新された値が表示されて便利。(wはwatchのw)
+```
+$ kubectl create -f lb-service.yaml
+```
+
+`$ kubectl get services hello-world-lb-svc -w` のように `-w`を指定すると、変更や再登録があった際に更新された値が表示されて便利。(wはwatchのw)
 
 EXTERNAL-IP が `<pending>` から有効な IP アドレス に変わったら(数分かかります)、そのアドレスにアクセスしてみましょう。Hello Worldが出力されるはずです。
-`$ curl http://$EXTERNAL_IP/`
+
+```
+$ curl http://$EXTERNAL_IP/
+```
 
 `type: LoadBalancer`を指定したので、load balancerも作成されたという次第です。
 
@@ -516,11 +569,11 @@ serviceには[他にも種類がある](https://qiita.com/sheepland/private/cdff
 - `kubectl get deployments`は`kubectl get deploy`
 - `kubectl get services`は`kubectl get svc`
 
-省略名称は、`kubectl get`と打つと`aka`で表示される。
-あと`kubectl get`でリソースの全種類が見れる。
+省略名称は、`kubectl api-resources`と打つと`SHORTNAMES`の欄に表示される。
+また`kubectl api-resources`で全リソースが表示される。
 
 
-# 10, Ingressの作成
+# 9, Ingressの作成
 
 次はServiceとIngressを作って以下の構成にします。
 
@@ -536,8 +589,9 @@ Ingressは以下が可能。
 * URLのパスごとにどのserviceにリクエストを割り振るかの設定
 * name-based virtual hosting (Apacheのバーチャルホスト相当)
 
+service.yaml
 
-```yaml:service.yaml
+```yaml
 apiVersion: v1
 kind: Service
 metadata:
@@ -550,9 +604,10 @@ spec:
     - port: 8080
 ```
 
-`serviceName: hello-world-svc`で紐付けるserviceを指定しています。
 
-```yaml:ingress.yaml
+ingress.yaml
+
+```yaml
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -566,11 +621,20 @@ spec:
           serviceName: hello-world-svc
           servicePort: 8080
 ```
+
+`serviceName: hello-world-svc`で紐付けるserviceを指定しています。
+
 Serviceの作成
-`$ kubectl create -f service.yaml`
+
+```
+$ kubectl create -f service.yaml
+```
 
 Ingressの作成
-`$ kubectl create -f ingress.yaml`
+
+```
+$ kubectl create -f ingress.yaml
+```
 
 確認
 
@@ -580,16 +644,28 @@ $ kubectl get ingress hello-world-ing -w
 
 
 しばらくするとADDRESS欄に外部IPが付与される。
+
 しかし外部IPが付与されたあとでもロードバランサがトラフィックを処理する準備が整うまで、HTTP 404 や HTTP 500 などのエラーが発生することがあります。正常にレスポンスが返るようになるまで結構かかる(10分以上?)ので気長に待ちましょう。。
+
 `kubectl describe ingress`のレスポンス内のAnnotationsのbackendsのUnknownがHEALTHYになったら正常にレスポンスを返すようになる。
+
 もしくはGCPのKubernetesの検出と負荷分散の画面でingressのステータスが正常になるまで待ちましょう
+
 https://console.cloud.google.com/kubernetes/discovery
+
 また、ロードバランサーは以下の画面から見れます
+
 https://console.cloud.google.com/net-services/loadbalancing/loadBalancers/list
 
 # 11, dashboard
 
 dashboard機能もあります
+
+以下を実行してdashboard機能をデプロイします
+
+```
+$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0-beta1/aio/deploy/recommended.yaml
+```
 
 以下を実行して表示される文字列をコピーします
 
@@ -603,15 +679,15 @@ proxyを立ち上げます
 $ kubectl proxy
 ```
 
-そして、 http://127.0.0.1:8001/ui へアクセス。
+そして、  http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/ へアクセス。
 
-認証が必要になるので、以下の画面が表示されたら、「Token」を選び、さっきコピった文字列を「Enter token」テキストボックスにペーストします。で、「SIGN IN」ボタンクリック。
+認証が必要になるので、以下の画面が表示されたら、「トークン」を選び、さっきコピった文字列を「Enter token」テキストボックスにペーストします。で、「サインイン」ボタンクリック。
 <img width="1049" alt="スクリーンショット 2018-05-09 19.48.11.png" src="https://qiita-image-store.s3.amazonaws.com/0/14124/a747f002-1910-43f8-2498-e32a7e85d2ea.png">
 
 
 proxyコマンドを使う以外にも方法はあります。参考: https://qiita.com/sheepland/items/0ee17b80fcfb10227a41
 
-# 12, 最後に
+# 11, 最後に
 
 終わったらまとめて消しましょう。
 
@@ -626,12 +702,18 @@ $ gcloud container clusters delete my-k8s
 ```
 
 Kubernetesのリソースの全削除は以下でも可能
-`kubectl delete all --all`
+
+```
+$ kubectl delete all --all
+```
 
 GCPのKubernetesはnodeの数だけGCEインスタンスを立ち上げています。なのでその分料金が発生しています。
 しかしGCEの画面からインスタンスを削除してもKubernetesが自動的にインスタンスを復旧(立ち上げ直す)しちゃいます。
-なので、以下のコマンドでnode数を0にするとよいです。こうするとclusterに登録したリソース(deploymentやserviceやingress等)の情報が失われません。sizeを再度例えば3にすると復旧します。
-`$ gcloud container clusters resize my-k8s --size=0`
+なので、以下のコマンドでnode数を0にするとよいです。こうするとclusterに登録したリソース(deploymentやserviceやingress等)の情報が失われません。num-nodesを再度例えば3にすると復旧します。
+
+```
+$ gcloud container clusters resize my-k8s --num-nodes=0
+```
 
 
 # その他のkubectlコマンド
@@ -656,6 +738,4 @@ kubectl explain pod.spec
     * https://kubernetes.io/docs/tutorials/kubernetes-basics/cluster-interactive/
 * ローカルでKubernetesクラスタを簡単にたてるためのアプリケーション
     * https://github.com/kubernetes/minikube
-
-
 
