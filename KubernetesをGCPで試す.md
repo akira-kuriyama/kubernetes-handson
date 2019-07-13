@@ -2,7 +2,7 @@
 # 0, 用語の理解
 
 Kubernetesは概念が命。
-用語を理解しないと始まらない。 
+用語を理解しないと始まらない。 (そして用語が沢山あるのだ…)
 
 [Kubernetesの用語の理解](https://qiita.com/sheepland/private/cdff472ba2d37784a125)
 
@@ -17,6 +17,7 @@ Kubernetesは概念が命。
 ### GCPのアカウントを作成
 
 会社のメアドではなく、個人のメアドでアカウントを作成します。
+会社のメアドで作るとstudyplus会社のGCPアカウントの中でユーザ作成がされて、同名のプロジェクトが作れなくなって面倒なことになります。
 
 ### GCPのコンソールにアクセスできることを確認。
 
@@ -89,7 +90,8 @@ $ PROJECT_ID=hogehoge #ここにプロジェクトIDを設定する(プロジェ
 ```
 
 [リソースの管理](https://console.cloud.google.com/cloud-resource-manager)画面に行き、以下をコピーする。
-![スクリーンショット 2018-10-10 23.43.37.png](https://qiita-image-store.s3.amazonaws.com/0/14124/ac943a9f-ded9-8b2e-8ee1-a1620d3aea9f.png)
+<img width="736" alt="スクリーンショット 2019-07-13 16.52.46.png" src="https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/14124/6d2fa4cf-c422-b9b2-02ec-a5b2e3fab039.png">
+
 
 
 ```bash
@@ -156,7 +158,8 @@ https://console.cloud.google.com/kubernetes で確認できます。
 完了まで数分(5,6分)かかる。
 
 Kubernetes Clusterが作成されると以下のようになる。
-![スクリーンショット 2018-05-09 3.10.24.png](https://qiita-image-store.s3.amazonaws.com/0/14124/63e6bb1d-1e3a-61df-4732-e88c64798549.png)
+<img width="1084" alt="スクリーンショット 2019-07-13 16.57.00.png" src="https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/14124/298da12e-b5bd-e086-da17-f6a8ecac0c27.png">
+
 
 また、 https://console.cloud.google.com/compute/instances をみるとGCEインスタンスが作成されているのが分かる。これがnodeとなる。
 
@@ -197,6 +200,7 @@ main.goを作成。8080ポートでまちうけ、Hello, World!を返すプロ�
 
 
 hello.go
+
 ```go
 package main
 
@@ -681,7 +685,8 @@ $ kubectl proxy
 そして、  http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/ へアクセス。
 
 認証が必要になるので、以下の画面が表示されたら、「トークン」を選び、さっきコピった文字列を「Enter token」テキストボックスにペーストします。で、「サインイン」ボタンクリック。
-<img width="1049" alt="スクリーンショット 2018-05-09 19.48.11.png" src="https://qiita-image-store.s3.amazonaws.com/0/14124/a747f002-1910-43f8-2498-e32a7e85d2ea.png">
+<img width="874" alt="スクリーンショット 2019-07-13 16.42.32.png" src="https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/14124/30071fc0-e73f-13e7-f771-4958a032b6d9.png">
+
 
 
 proxyコマンドを使う以外にも方法はあります。参考: https://qiita.com/sheepland/items/0ee17b80fcfb10227a41
